@@ -91,7 +91,7 @@ results %>%
   ggplot(aes(x = N, y = value, color = Estimator))+
   geom_line()+
   geom_point()+
-  scale_y_log10(limits = c(1, max))+
+  scale_y_log10(limits = c(min, max))+
   theme_bw()+
   scale_color_viridis_d()+
   labs(x = "Training Size", y = "MSE")
@@ -108,7 +108,7 @@ results %>%
   ggplot(aes(x = N, y = value, color = Estimator))+
   geom_line()+
   geom_point()+
-  scale_y_log10(limits = c(1, max))+
+  scale_y_log10(limits = c(min, max))+
   theme_bw()+
   scale_color_viridis_d()+
   labs(x = "Training Size", y = "MSE")
