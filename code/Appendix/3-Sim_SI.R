@@ -1,6 +1,5 @@
 # Recreate Simulation SI 3 (complex non-linear).
 library(causalToolbox)
-library(npcausal)
 library(ggplot2)
 library(dplyr)
 library(reshape)
@@ -10,7 +9,8 @@ library(viridis)
 # Recreate Complex Linear Experiment from Metalearners paper ===================
 
 #?simulate_causal_experiment
-results <- data.frame(N = c(1000, 2000, 5000, 10000, 20000))
+n_range <- c(5000, 10000, 20000)
+results <- data.frame(N = n_range)
 results$XRF <- NA
 results$XBART <- NA
 results$SRF <- NA
@@ -18,11 +18,10 @@ results$SBART <- NA
 results$TRF <- NA
 results$TBART <- NA
 
-for (n in c(1000, 2000, 5000, 10000, 20000)) {
+for (n in n_range) {
   complex_linear_experiment <- simulate_causal_experiment(ntrain = n,
                                                                    ntest = 1000,
                                                                    dim = 20,
-                                                                   alpha = 0,
                                                                    pscore = "rct5",
                                                                    mu0 = "complexNonLinear",
                                                                    tau = "complexNonLinear")

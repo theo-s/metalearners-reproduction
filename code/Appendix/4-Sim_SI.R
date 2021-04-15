@@ -1,6 +1,5 @@
 # Recreate Simulation SI 4 (global linear).
 library(causalToolbox)
-library(npcausal)
 library(ggplot2)
 library(dplyr)
 library(reshape)
@@ -8,7 +7,8 @@ library(ggrepel)
 library(Rforestry)
 
 #?simulate_causal_experiment
-results <- data.frame(N = c(1000, 2000, 5000, 10000, 20000))
+n_range <- c(5000, 10000, 20000)
+results <- data.frame(N = n_range)
 results$XRF <- NA
 results$XBART <- NA
 results$SRF <- NA
@@ -16,23 +16,10 @@ results$SBART <- NA
 results$TRF <- NA
 results$TBART <- NA
 
-forestry_params <- list(
-  relevant.Variable = 1:20,
-  ntree = 500,
-  replace = TRUE,
-  sample.fraction = 0.9,
-  mtry = round(10),
-  nodesizeSpl = 5,
-  nodesizeAvg = 5,
-  splitratio = 1,
-  middleSplit = TRUE
-)
-
-for (n in c(1000, 2000, 5000, 10000, 20000)) {
+for (n in n_range) {
   locally_linear_experiment <- simulate_causal_experiment(ntrain = n,
                                                           ntest = 1000,
                                                           dim = 5,
-                                                          alpha = 0,
                                                           pscore = "rct5",
                                                           mu0 = "fullLinearStrong",
                                                           tau = "fullLinearStrong",
@@ -47,22 +34,16 @@ for (n in c(1000, 2000, 5000, 10000, 20000)) {
 
   # Train the X Learner with BART and RF
   print(paste0("Training XRF, N = ", n))
-  xl_rf <- X_RF(feat = feature_train, tr = w_train, yobs = yobs_train,
-                mu.forestry = forestry_params,
-                tau.forestry = forestry_params,
-                e.forestry = forestry_params)
+  xl_rf <- X_RF(feat = feature_train, tr = w_train, yobs = yobs_train)
   print(paste0("Training XBART, N = ", n))
   xl_bart <- X_BART(feat = feature_train, tr = w_train, yobs = yobs_train)
   print(paste0("Training SRF, N = ", n))
-  sl_rf <- S_RF(feat = feature_train, tr = w_train, yobs = yobs_train,
-                mu.forestry = forestry_params, nthread = 0)
+  sl_rf <- S_RF(feat = feature_train, tr = w_train, yobs = yobs_train)
 
   print(paste0("Training SBART, N = ", n))
   sl_bart <- S_BART(feat = feature_train, tr = w_train, yobs = yobs_train)
   print(paste0("Training TRF, N = ", n))
-  tl_rf <- T_RF(feat = feature_train, tr = w_train, yobs = yobs_train,
-                mu0.forestry = forestry_params,
-                mu1.forestry = forestry_params)
+  tl_rf <- T_RF(feat = feature_train, tr = w_train, yobs = yobs_train)
   print(paste0("Training TBART, N = ", n))
   tl_bart <- T_BART(feat = feature_train, tr = w_train, yobs = yobs_train)
 
