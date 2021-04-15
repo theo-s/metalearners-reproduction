@@ -67,7 +67,7 @@ for (n in c(1000, 2000, 5000, 10000, 20000)) {
 
   # Save the intermediate results
   write.csv(results,
-            file = "note_plots/figures/complex_linearEMSE.csv",
+            file = "results/complex_linearEMSE.csv",
             row.names = FALSE)
 
   # Clean up the environment
@@ -97,7 +97,7 @@ results %>%
   scale_color_viridis_d()+
   labs(x = "Training Size", y = "MSE")
 
-ggsave(filename = "note_plots/figures/complex_linear_BART.pdf", height = 6, width = 6)
+ggsave(filename = "figures/complex_linear_BART.pdf", height = 6, width = 6)
 
 results %>%
   melt(id = "N") %>%
@@ -114,7 +114,7 @@ results %>%
   scale_color_viridis_d()+
   labs(x = "Training Size", y = "MSE")
 
-ggsave(filename = "note_plots/figures/complex_linear_RF.pdf", height = 6, width = 6)
+ggsave(filename = "figures/complex_linear_RF.pdf", height = 6, width = 6)
 
 
 

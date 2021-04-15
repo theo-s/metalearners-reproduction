@@ -7,8 +7,6 @@ library(reshape)
 library(ggrepel)
 library(Rforestry)
 
-# Recreate Piecewise Linear (Local) Experiment from Metalearners paper =========
-
 #?simulate_causal_experiment
 results <- data.frame(N = c(1000, 2000, 5000, 10000, 20000))
 results$XRF <- NA
@@ -33,11 +31,12 @@ forestry_params <- list(
 for (n in c(1000, 2000, 5000, 10000, 20000)) {
   locally_linear_experiment <- simulate_causal_experiment(ntrain = n,
                                                           ntest = 1000,
-                                                          dim = 20,
+                                                          dim = 5,
                                                           alpha = 0,
                                                           pscore = "rct5",
-                                                          mu0 = "fullLocallyLinearZero",
-                                                          tau = "fullLocallyLinearVeryHigh")
+                                                          mu0 = "fullLinearStrong",
+                                                          tau = "fullLinearStrong",
+                                                          noEffect = TRUE)
 
 
   feature_train <- locally_linear_experiment$feat_tr
@@ -89,7 +88,7 @@ for (n in c(1000, 2000, 5000, 10000, 20000)) {
 
   # Save the intermediate results
   write.csv(results,
-            file = "note_plots/figures/piecewise_linearEMSE.csv",
+            file = "results/piecewise_linearEMSE.csv",
             row.names = FALSE)
 
   # Clean up the environment
@@ -121,7 +120,7 @@ results %>%
   scale_color_viridis_d()+
   labs(x = "Training Size", y = "MSE")
 
-ggsave(filename = "note_plots/figures/piecewise_linear_BART.pdf", height = 6, width = 6)
+ggsave(filename = "figures/piecewise_linear_BART.pdf", height = 6, width = 6)
 
 results %>%
   melt(id = "N") %>%
@@ -138,6 +137,6 @@ results %>%
   scale_color_viridis_d()+
   labs(x = "Training Size", y = "MSE")
 
-ggsave(filename = "note_plots/figures/piecewise_linear_RF.pdf", height = 6, width = 6)
+ggsave(filename = "figures/piecewise_linear_RF.pdf", height = 6, width = 6)
 
 
