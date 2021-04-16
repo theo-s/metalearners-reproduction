@@ -19,18 +19,18 @@ results$TRF <- NA
 results$TBART <- NA
 
 for (n in n_range) {
-  locally_linear_experiment <- simulate_causal_experiment(ntrain = n,
-                                                          ntest = 1000,
-                                                          dim = 20,
-                                                          pscore = "rct5",
-                                                          mu0 = "fullLocallyLinear",
-                                                          tau = "fullLocallyLinear",
-                                                          noEffect = TRUE)
+  exp <- simulate_causal_experiment(ntrain = n,
+                                    ntest = 1000,
+                                    dim = 20,
+                                    pscore = "rct5",
+                                    mu0 = "fullLocallyLinear",
+                                    tau = "fullLocallyLinear",
+                                    noEffect = TRUE)
 
 
-  feature_train <- locally_linear_experiment$feat_tr
-  w_train <- locally_linear_experiment$W_tr
-  yobs_train <- locally_linear_experiment$Yobs_tr
+  feature_train <- exp$feat_tr
+  w_train <- exp$W_tr
+  yobs_train <- exp$Yobs_tr
 
   #locally_linear_experiment$tau_te
 
@@ -50,7 +50,7 @@ for (n in n_range) {
   tl_bart <- T_BART(feat = feature_train, tr = w_train, yobs = yobs_train)
 
   # estimate the CATE
-  feature_test <- locally_linear_experiment$feat_te
+  feature_test <- exp$feat_te
 
   cate_esti_xrf <- EstimateCate(xl_rf, feature_test)
   cate_esti_xbart <- EstimateCate(xl_bart, feature_test)
@@ -60,7 +60,7 @@ for (n in n_range) {
   cate_esti_tbart <- EstimateCate(tl_bart, feature_test)
 
   # evaluate the performance
-  cate_true <- locally_linear_experiment$tau_te
+  cate_true <- exp$tau_te
   results$XRF[which(results$N == n)] <- mean((cate_esti_xrf - cate_true)^2)
   results$XBART[which(results$N == n)] <- mean((cate_esti_xbart - cate_true)^2)
   results$SRF[which(results$N == n)] <- mean((cate_esti_srf - cate_true)^2)

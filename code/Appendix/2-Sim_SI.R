@@ -19,17 +19,17 @@ results$TRF <- NA
 results$TBART <- NA
 
 for (n in n_range) {
-  complex_linear_experiment <- simulate_causal_experiment(ntrain = n,
-                                                                   ntest = 1000,
-                                                                   dim = 20,
-                                                                   pscore = "rct5",
-                                                                   mu0 = "fullLinearStrong",
-                                                                   tau = "fullLinearStrong")
+  exp <- simulate_causal_experiment(ntrain = n,
+                                    ntest = 1000,
+                                    dim = 20,
+                                    pscore = "rct5",
+                                    mu0 = "fullLinearStrong",
+                                    tau = "fullLinearStrong")
 
 
-  feature_train <- complex_linear_experiment$feat_tr
-  w_train <- complex_linear_experiment$W_tr
-  yobs_train <- complex_linear_experiment$Yobs_tr
+  feature_train <- exp$feat_tr
+  w_train <- exp$W_tr
+  yobs_train <- exp$Yobs_tr
 
   # Train the X Learner with BART and RF
   print(paste0("Training XRF, N = ", n))
@@ -46,7 +46,7 @@ for (n in n_range) {
   tl_bart <- T_BART(feat = feature_train, tr = w_train, yobs = yobs_train)
 
   # estimate the CATE
-  feature_test <- complex_linear_experiment$feat_te
+  feature_test <- exp$feat_te
 
   cate_esti_xrf <- EstimateCate(xl_rf, feature_test)
   cate_esti_xbart <- EstimateCate(xl_bart, feature_test)
@@ -56,7 +56,7 @@ for (n in n_range) {
   cate_esti_tbart <- EstimateCate(tl_bart, feature_test)
 
   # evaluate the performance
-  cate_true <- complex_linear_experiment$tau_te
+  cate_true <- exp$tau_te
   results$XRF[which(results$N == n)] <- mean((cate_esti_xrf - cate_true)^2)
   results$XBART[which(results$N == n)] <- mean((cate_esti_xbart - cate_true)^2)
   results$SRF[which(results$N == n)] <- mean((cate_esti_srf - cate_true)^2)
