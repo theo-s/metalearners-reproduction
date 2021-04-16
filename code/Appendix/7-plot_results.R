@@ -5,9 +5,29 @@ library(ggrepel)
 library(viridis)
 
 
-for (file_i in dir("results")) {
-  results <- read.csv(file = paste0("results/",file_i))
-  exp_name <- gsub(pattern = "EMSE.csv", replace = "", x = file_i)
+experiments <- c("beta_confounded",
+                 "complex_linear",
+                 "global_linear",
+                 "piecewise_linear",
+                 "unbalanced_treatment",
+                 "complex_nonlinear")
+
+for (experiment in experiments ) {
+  results <- data.frame()
+  for (file_i in dir("results", pattern = experiment)) {
+    results_i <- read.csv(file = paste0("results/", file_i))
+    results <- rbind(results, results_i)
+  }
+
+  results %>%
+    group_by(N) %>%
+    summarise(XRF = mean(XRF),
+              XBART = mean(XBART),
+              SRF = mean(SRF),
+              SBART = mean(SBART),
+              TRF = mean(TRF),
+              TBART = mean(TBART)) %>%
+    as.data.frame() -> results
 
   min <- min(results %>%
                melt(id = "N") %>%
