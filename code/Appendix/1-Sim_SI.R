@@ -13,7 +13,7 @@ if (!interactive()){
   args <- parser$parse_args()
 
   N <- args$n
-  d <- args$r
+  r <- args$r
 } else {
   N <- 20000
   r <- 10
