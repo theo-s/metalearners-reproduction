@@ -7,17 +7,19 @@ if (!interactive()){
 
   parser <- ArgumentParser()
 
-  parser$add_argument("--n", type = "integer", default = 20000, help = "Maximum N")
-  parser$add_argument("--r", type = "integer", default = 10, help = "Number of reps to run")
+  parser$add_argument("--n", type = "integer", default = 100000, help = "Maximum N")
+  parser$add_argument("--r", type = "integer", default = 20, help = "Number of reps to run")
 
   args <- parser$parse_args()
 
   N <- args$n
   r <- args$r
 } else {
-  N <- 20000
-  r <- 10
+  N <- 300000
+  r <- 20
 }
+
+print(paste0("N: ", N, " r: ", r))
 
 for (rep in 1:r) {
 
@@ -30,7 +32,7 @@ for (rep in 1:r) {
   results$SBART <- NA
   results$TRF <- NA
   results$TBART <- NA
-  filename <- paste0("results/global_linear",rep,"EMSE.csv")
+  filename <- paste0("code/Appendix/results/global_linear",rep,"EMSE.csv")
 
   for (n in n_range) {
     exp <- simulate_causal_experiment(ntrain = n,
